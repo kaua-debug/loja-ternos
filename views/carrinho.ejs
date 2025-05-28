@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seu Carrinho</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Carrinho de Compras</h1>
+
+  <% if (carrinho.length === 0) { %>
+    <p>Seu carrinho está vazio.</p>
+  <% } else { %>
+    <ul>
+      <% carrinho.forEach(p => { %>
+        <li>
+          <strong><%= p.nome %></strong> - R$ <%= p.preco.toFixed(2) %>
+        </li>
+      <% }) %>
+    </ul>
+
+    <p><strong>Total:</strong> R$ 
+      <%= carrinho.reduce((total, p) => total + p.preco, 0).toFixed(2) %>
+    </p>
+  <% } %>
+
+  <a href="/">Voltar à loja</a>
+</body>
+</html>

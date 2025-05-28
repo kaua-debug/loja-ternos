@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Loja de Ternos</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Bem-vindo à Loja de Ternos</h1>
+  <div class="produtos">
+    <% produtos.forEach(p => { %>
+      <div class="produto">
+        <img src="<%= p.imagem %>" alt="<%= p.nome %>">
+        <h3><%= p.nome %></h3>
+        <p>R$ <%= p.preco.toFixed(2) %></p>
+        <a href="/produto/<%= p.id %>">Ver mais</a>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>
