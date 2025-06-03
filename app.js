@@ -1,102 +1,51 @@
 const express = require('express');
-const router = express.Router();
-const fs = require('fs');
+const session = require('express-session'); // Necessário para req.session
 const path = require('path');
-const produtos = require('../data/produtos.json');
-const usuarios = require('../data/usuarios.json');
+const app = express();
 
-// Simulação de carrinho (armazenado em memória)
-let carrinho = [];
+// Configuração da sessão
+// É importante usar uma chave secreta forte e única para produção
+app.use(session({
+    secret: 'sua_chave_secreta_muito_segura', // Troque por uma string aleatória e forte
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Defina como true se estiver usando HTTPS em produção
+}));
 
-// Middleware para proteger rotas
-function proteger(req, res, next) {
-  if (!req.session.usuario) {
-    return res.redirect('/login');
-  }
-  next();
-}
+// Middleware para processar dados de formulário
+app.use(express.urlencoded({ extended: true })); // Para dados de formulário HTML
+app.use(express.json()); // Para dados JSON (se for usar APIs)
 
-// Página inicial
-router.get('/', (req, res) => {
-  res.render('index', { produtos });
+// Configuração do EJS como motor de template
+app.set('view engine', 'ejs');
+// Define o diretório onde os arquivos .ejs estão localizados
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Correção dos caminhos para os arquivos JSON
+// 'app.js' está na raiz do projeto (C:\dev\loja ternos\loja-ternos\app.js)
+// A pasta 'data' está diretamente dentro da raiz (C:\dev\loja ternos\loja-ternos\data\)
+// Portanto, os caminhos corretos são './data/...' ou 'data/...'.
+// O erro 'Cannot find module' significa que o Node.js não encontrou o arquivo
+// no local especificado, mesmo com o caminho correto no código.
+// Por favor, VERIFIQUE se os arquivos 'produtos.json' e 'usuarios.json'
+// realmente existem dentro da pasta 'data' e se os nomes estão EXATOS (incluindo maiúsculas/minúsculas).
+const produtos = require('./data/produtos.json'); // Esta linha
+const usuarios = require('./data/usuarios.json'); // E esta linha (linha 32 no seu erro)
+
+// Importa o roteador principal
+const mainRouter = require('./route/index'); // Assumindo que seu roteador está em route/index.js
+
+// Usa o roteador para todas as rotas
+app.use('/', mainRouter);
+
+// Correção da definição da porta
+// Você pode usar process.env.PORT para ambientes de produção ou 3000 para desenvolvimento
+const PORT = process.env.PORT || 3000; // Define a porta, usando variável de ambiente ou 3000 como padrão
+
+// Inicia o servidor
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
-// Lista de produtos
-router.get('/produtos', (req, res) => {
-  res.render('produtos', { produtos });
-});
-
-// Página do produto individual
-router.get('/produto/:id', (req, res) => {
-  const produto = produtos.find(p => p.id === parseInt(req.params.id));
-  if (!produto) return res.status(404).send('Produto não encontrado');
-  res.render('produto', { produto });
-});
-
-// Adicionar produto ao carrinho
-router.post('/carrinho', (req, res) => {
-  const produtoId = parseInt(req.body.produtoId);
-  const produto = produtos.find(p => p.id === produtoId);
-  if (produto) {
-    carrinho.push(produto);
-  }
-  res.redirect('/carrinho');
-});
-
-// Exibir carrinho
-router.get('/carrinho', (req, res) => {
-  res.render('carrinho', { carrinho });
-});
-
-// Tela de login
-router.get('/login', (req, res) => {
-  res.render('login', { erro: null });
-});
-
-// Processar login
-router.post('/login', (req, res) => {
-  const { email, senha } = req.body;
-  const usuario = usuarios.find(u => u.email === email && u.senha === senha);
-  if (usuario) {
-    req.session.usuario = usuario;
-    res.redirect('/admin');
-  } else {
-    res.render('login', { erro: 'Email ou senha inválidos' });
-  }
-});
-
-// Logout
-router.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
-});
-
-// Painel de administração (protegido)
-router.get('/admin', proteger, (req, res) => {
-  res.render('admin', { usuario: req.session.usuario });
-});
-
-// Cadastrar novo produto
-router.post('/admin', proteger, (req, res) => {
-  const { nome, descricao, preco, imagem } = req.body;
-  const produtos = require('../data/produtos.json');
-
-  const novoProduto = {
-    id: produtos.length + 1,
-    nome,
-    descricao,
-    preco: parseFloat(preco),
-    imagem
-  };
-
-  produtos.push(novoProduto);
-
-  fs.writeFileSync(
-    path.join(__dirname, '../data/produtos.json'),
-    JSON.stringify(produtos, null, 2)
-  );
-
-  res.redirect('/');
-});
-
-module.exports = router;
