@@ -1,16 +1,9 @@
 [
   {
     "id": 1,
-    "nome": "Terno Slim Azul Marinho",
-    "descricao": "Terno masculino azul marinho corte slim.",
+    "nome": "Terno Azul",
+    "descricao": "Terno elegante azul escuro",
     "preco": 499.90,
-    "imagem": "/img/terno1.jpg"
-  },
-  {
-    "id": 2,
-    "nome": "Terno Clássico Preto",
-    "descricao": "Terno preto clássico com tecido premium.",
-    "preco": 599.90,
-    "imagem": "/img/terno2.jpg"
+    "imagem": "/images/terno-azul.jpg"
   }
 ]

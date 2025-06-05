@@ -1,14 +1,1 @@
-[
-    [
-  {
-    "id": 1,
-    "email": "usuario1@example.com",
-    "senha": "senha123"
-  },
-  {
-    "id": 2,
-    "email": "usuario2@example.com",
-    "senha": "outrasenha"
-  }
-]
-]
+ []

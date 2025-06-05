@@ -3,18 +3,22 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
-// Os caminhos para 'produtos.json' e 'usuarios.json' estão CORRETOS AQUI
-// porque este arquivo (se estiver em 'route/') precisa subir um nível (../)
-// para acessar a pasta 'data'.
-let produtos = require('../data/produtos.json'); // Usar 'let' para permitir reatribuição
+let produtos = require('../data/produtos.json');
 const usuarios = require('../data/usuarios.json');
 
-// Simulação de carrinho (armazenado em memória)
+const getUsuarios = () => {
+    try {
+        const data = fs.readFileSync(path.join(__dirname, '../data/usuarios.jspn'), 'utf-8');
+        return data ? JSON.parse(data) : [];
+    } catch {
+        return [];
+    }
+};
+
 let carrinho = [];
 
-// Middleware para proteger rotas (requer 'express-session' configurado em app.js)
 function proteger(req, res, next) {
-    if (!req.session || !req.session.usuario) { // Adicionado req.session para evitar erro se a sessão não estiver configurada
+    if (!req.session || !req.session.usuario) {
         return res.redirect('/login');
     }
     next();
@@ -27,13 +31,18 @@ router.get('/', (req, res) => {
 
 // Lista de produtos
 router.get('/produtos', (req, res) => {
-    res.render('produtos', { produtos });
+    const erro = req.query.erro || null;
+    res.render('produtos', {
+        produtos,
+        erro,
+        usuario: req.session.usuario || null
+    });
 });
 
 // Página do produto individual
 router.get('/produto/:id', (req, res) => {
     const produto = produtos.find(p => p.id === parseInt(req.params.id));
-    if (!produto) return res.status(404).send('Produto não encontrado');
+    if (!produto) return res.status(404).send('Produto nao encontrado');
     res.render('produto', { produto });
 });
 
@@ -43,6 +52,8 @@ router.post('/carrinho', (req, res) => {
     const produto = produtos.find(p => p.id === produtoId);
     if (produto) {
         carrinho.push(produto);
+    } else {
+        return res.redirect('/produtos?erro=Produto%20nao%20encontrado');
     }
     res.redirect('/carrinho');
 });
@@ -62,50 +73,97 @@ router.post('/login', (req, res) => {
     const { email, senha } = req.body;
     const usuario = usuarios.find(u => u.email === email && u.senha === senha);
     if (usuario) {
-        // Certifique-se de que 'express-session' está configurado em app.js
         req.session.usuario = usuario;
         res.redirect('/admin');
     } else {
-        res.render('login', { erro: 'Email ou senha inválidos' });
+        res.render('login', { erro: 'Email ou senha invalidos' });
     }
 });
 
 // Logout
 router.get('/logout', (req, res) => {
-    if (req.session) { // Verifica se a sessão existe antes de tentar destruir
-        req.session.destroy();
+    if (req.session) {
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/');
 });
 
-// Painel de administração (protegido)
+// Painel admin
 router.get('/admin', proteger, (req, res) => {
-    res.render('admin', { usuario: req.session.usuario, produtos: produtos }); // Passa 'produtos' para a view admin
+    res.render('admin', {
+        usuario: req.session.usuario,
+        produtos
+    });
 });
 
-// Cadastrar novo produto
+// Cadastro de novo produto
 router.post('/admin', proteger, (req, res) => {
     const { nome, descricao, preco, imagem } = req.body;
 
-    // Não re-requer o arquivo aqui. Modifique o array 'produtos' já carregado.
-    // É importante que 'produtos' seja declarado com 'let' no topo do arquivo.
+    if (!nome || !descricao || !preco || !imagem) {
+        return res.redirect('/admin?erro=Preencha%20todos%20os%20campos');
+    }
+
     const novoProduto = {
-        id: produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1, // Gera ID único
+        id: produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1,
         nome,
         descricao,
         preco: parseFloat(preco),
         imagem
     };
 
-    produtos.push(novoProduto); // Adiciona ao array em memória
+    produtos.push(novoProduto);
 
-    // Escreve o array atualizado de volta no arquivo JSON
     fs.writeFileSync(
         path.join(__dirname, '../data/produtos.json'),
         JSON.stringify(produtos, null, 2)
     );
 
-    res.redirect('/admin'); // Redireciona para o painel admin para ver o novo produto
+    res.redirect('/admin');
+});
+
+// Rota que exibe o formulário de cadastro
+router.get('/cadastro', (req, res) => {
+    res.render('register', { erro: null, sucesso: null });
+});
+
+// Rota que processa o formulário de cadastro
+router.post('/cadastro', (req, res) => {
+    const { nome, email, senha } = req.body;
+
+    if (!nome || !email || !senha) {
+        return res.render('register', { erro: 'Preencha todos os campos.', sucesso: null });
+    }
+
+   let usuariosAtualizados = getUsuarios();
+
+    const usuarioExistente = usuariosAtualizados.find(u => u.email === email);
+    if (usuarioExistente) {
+        return res.render('register', { erro: 'Email já cadastrado.', sucesso: null });
+    }
+
+    const novoUsuario = {
+        id: usuariosAtualizados.length > 0 ? Math.max(...usuariosAtualizados.map(u => u.id)) + 1 : 1,
+        nome,
+        email,
+        senha
+    };
+
+    usuariosAtualizados.push(novoUsuario);
+
+    try {
+        fs.writeFileSync(
+            path.join(__dirname, '../data/usuarios.json'),
+            JSON.stringify(usuariosAtualizados, null, 2)
+        );
+    } catch (err) {
+        return res.render('register', { erro: 'Erro ao salvar usuário.', sucesso: null });
+    }
+
+    res.render('register', { sucesso: 'Conta criada com sucesso!', erro: null });
 });
 
 module.exports = router;

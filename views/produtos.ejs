@@ -3,56 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registar - Loja de Ternos</title>
+    <title>Produtos - Loja de Ternos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/style.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Estilos adicionais para o card do produto */
+        .product-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">Criar Conta</h1>
+<body class="bg-gray-100 font-sans">
 
+    <header class="bg-gray-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Loja de Ternos</h1>
+            <nav>
+                <a href="/" class="text-white hover:text-gray-300 mx-2">Home</a>
+                <a href="/produtos" class="text-white hover:text-gray-300 mx-2">Produtos</a>
+                <a href="/carrinho" class="text-white hover:text-gray-300 mx-2">Carrinho</a>
+                <% if (typeof usuario !== 'undefined' && usuario) { %>
+                    <a href="/admin" class="text-white hover:text-gray-300 mx-2">Admin</a>
+                    <a href="/logout" class="text-white hover:text-gray-300 mx-2">Sair</a>
+                <% } else { %>
+                    <a href="/login" class="text-white hover:text-gray-300 mx-2">Login</a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
         <% if (erro) { %>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
                 <strong class="font-bold">Erro!</strong>
                 <span class="block sm:inline"><%= erro %></span>
             </div>
         <% } %>
-        <% if (sucesso) { %>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-                <strong class="font-bold">Sucesso!</strong>
-                <span class="block sm:inline"><%= sucesso %></span>
-            </div>
-        <% } %>
 
-        <form action="/register" method="POST" class="space-y-6">
-            <div>
-                <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">Nome:</label>
-                <input type="text" id="nome" name="nome" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email:</label>
-                <input type="email" id="email" name="email" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <div>
-                <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha:</label>
-                <input type="password" id="senha" name="senha" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <button type="submit"
-                    class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300 shadow-md">
-                Registar
-            </button>
-        </form>
-        <p class="mt-6 text-center text-gray-600">
-            Já tem uma conta? <a href="/login" class="text-indigo-600 hover:text-indigo-800 font-medium">Entrar aqui</a>
-        </p>
-    </div>
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-10">Nossos Produtos</h1>
+
+        <div class="flex justify-center space-x-4 mb-8">
+            <a href="#ternos" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Ternos</a>
+            <a href="#camisas" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Camisas Sociais</a>
+            <a href="#gravatas" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Gravatas</a>
+            <a href="#sapatos" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">Sapatos Sociais</a>
+        </div>
+
+        <h2 id="ternos" class="text-3xl font-bold text-gray-700 mb-6 border-b-2 border-gray-300 pb-2">Ternos</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            <% produtos.filter(p => p.categoria === 'terno').forEach(produto => { %>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden product-card">
+                    <a href="/produto/<%= produto.id %>">
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-xl text-gray-900 mb-2"><%= produto.nome %></h3>
+                        <p class="text-gray-600 text-sm mb-3"><%= produto.descricao %></p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            <form action="/carrinho" method="POST">
+                                <input type="hidden" name="produtoId" value="<%= produto.id %>">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                    Adicionar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+            <% if (produtos.filter(p => p.categoria === 'terno').length === 0) { %>
+                <p class="col-span-full text-center text-gray-600">Nenhum terno disponível no momento.</p>
+            <% } %>
+        </div>
+
+        <h2 id="camisas" class="text-3xl font-bold text-gray-700 mb-6 border-b-2 border-gray-300 pb-2">Camisas Sociais</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            <% produtos.filter(p => p.categoria === 'camisa social').forEach(produto => { %>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden product-card">
+                    <a href="/produto/<%= produto.id %>">
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-xl text-gray-900 mb-2"><%= produto.nome %></h3>
+                        <p class="text-gray-600 text-sm mb-3"><%= produto.descricao %></p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            <form action="/carrinho" method="POST">
+                                <input type="hidden" name="produtoId" value="<%= produto.id %>">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                    Adicionar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+            <% if (produtos.filter(p => p.categoria === 'camisa social').length === 0) { %>
+                <p class="col-span-full text-center text-gray-600">Nenhuma camisa social disponível no momento.</p>
+            <% } %>
+        </div>
+
+        <h2 id="gravatas" class="text-3xl font-bold text-gray-700 mb-6 border-b-2 border-gray-300 pb-2">Gravatas</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            <% produtos.filter(p => p.categoria === 'gravata').forEach(produto => { %>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden product-card">
+                    <a href="/produto/<%= produto.id %>">
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-xl text-gray-900 mb-2"><%= produto.nome %></h3>
+                        <p class="text-gray-600 text-sm mb-3"><%= produto.descricao %></p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            <form action="/carrinho" method="POST">
+                                <input type="hidden" name="produtoId" value="<%= produto.id %>">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                    Adicionar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+            <% if (produtos.filter(p => p.categoria === 'gravata').length === 0) { %>
+                <p class="col-span-full text-center text-gray-600">Nenhuma gravata disponível no momento.</p>
+            <% } %>
+        </div>
+
+        <h2 id="sapatos" class="text-3xl font-bold text-gray-700 mb-6 border-b-2 border-gray-300 pb-2">Sapatos Sociais</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            <% produtos.filter(p => p.categoria === 'sapato social').forEach(produto => { %>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden product-card">
+                    <a href="/produto/<%= produto.id %>">
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" class="w-full h-48 object-cover">
+                    </a>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-xl text-gray-900 mb-2"><%= produto.nome %></h3>
+                        <p class="text-gray-600 text-sm mb-3"><%= produto.descricao %></p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-blue-600">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            <form action="/carrinho" method="POST">
+                                <input type="hidden" name="produtoId" value="<%= produto.id %>">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                    Adicionar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+            <% if (produtos.filter(p => p.categoria === 'sapato social').length === 0) { %>
+                <p class="col-span-full text-center text-gray-600">Nenhum sapato social disponível no momento.</p>
+            <% } %>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 text-center mt-8">
+        <p>&copy; 2025 Loja de Ternos. Todos os direitos reservados.</p>
+    </footer>
+
 </body>
 </html>

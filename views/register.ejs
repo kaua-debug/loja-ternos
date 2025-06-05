@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadastro - Loja de Ternos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <header class="bg-gray-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Loja de Ternos</h1>
+            <nav>
+                <a href="/" class="text-white hover:text-gray-300 mx-2">Home</a>
+                <a href="/produtos" class="text-white hover:text-gray-300 mx-2">Produtos</a>
+                <a href="/carrinho" class="text-white hover:text-gray-300 mx-2">Carrinho</a>
+                <% if (typeof usuario !== 'undefined' && usuario) { %>
+                    <a href="/admin" class="text-white hover:text-gray-300 mx-2">Admin</a>
+                    <a href="/logout" class="text-white hover:text-gray-300 mx-2">Sair</a>
+                <% } else { %>
+                    <a href="/login" class="text-white hover:text-gray-300 mx-2">Login</a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12 max-w-md">
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">Cadastro de Usuário</h1>
+
+        <% if (erro) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+                <strong class="font-bold">Erro!</strong>
+                <span class="block sm:inline"><%= erro %></span>
+            </div>
+        <% } %>
+
+        <form action="/register" method="POST" class="bg-white p-8 rounded-lg shadow-lg">
+            <div class="mb-6">
+                <label for="nome" class="block mb-2 font-semibold text-gray-700">Nome Completo</label>
+                <input type="text" id="nome" name="nome" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+
+            <div class="mb-6">
+                <label for="email" class="block mb-2 font-semibold text-gray-700">E-mail</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+
+            <div class="mb-6">
+                <label for="senha" class="block mb-2 font-semibold text-gray-700">Senha</label>
+                <input type="password" id="senha" name="senha" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+
+            <div class="mb-6">
+                <label for="confirmarSenha" class="block mb-2 font-semibold text-gray-700">Confirmar Senha</label>
+                <input type="password" id="confirmarSenha" name="confirmarSenha" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition">
+                Cadastrar
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-gray-600">
+            Já tem uma conta?
+            <a href="/login" class="text-blue-600 hover:underline">Faça login aqui</a>.
+        </p>
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 text-center mt-12">
+        <p>&copy; 2025 Loja de Ternos. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>
