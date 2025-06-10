@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 
 let produtos = require('../data/produtos.json');
-const usuarios = require('../data/usuarios.json');
 
 const getUsuarios = () => {
     try {
@@ -58,10 +57,37 @@ router.post('/carrinho', (req, res) => {
     res.redirect('/carrinho');
 });
 
-// Exibir carrinho
+// Exibir carrinho com subtotal, frete e total
 router.get('/carrinho', (req, res) => {
-    res.render('carrinho', { carrinho });
+    // Exemplo simples: agrupar produtos iguais e contar quantidade
+    const carrinhoAgrupado = [];
+
+    carrinho.forEach(produto => {
+        const existente = carrinhoAgrupado.find(p => p.id === produto.id);
+        if (existente) {
+            existente.quantidade++;
+        } else {
+            carrinhoAgrupado.push({ ...produto, quantidade: 1 });
+        }
+    });
+
+    // Calcular subtotal
+    const subtotal = carrinhoAgrupado.reduce((total, item) => total + item.preco * item.quantidade, 0);
+
+    // Definir frete fixo para exemplo (zero se vazio)
+    const frete = subtotal > 0 ? 20.0 : 0.0;
+
+    // Total com frete
+    const total = subtotal + frete;
+
+    res.render('carrinho', {
+        carrinho: carrinhoAgrupado,
+        subtotal,
+        frete,
+        total
+    });
 });
+
 
 // Tela de login
 router.get('/login', (req, res) => {
@@ -71,6 +97,7 @@ router.get('/login', (req, res) => {
 // Processar login
 router.post('/login', (req, res) => {
     const { email, senha } = req.body;
+    const usuariosAtualizados = getUsuarios();
     const usuario = usuarios.find(u => u.email === email && u.senha === senha);
     if (usuario) {
         req.session.usuario = usuario;

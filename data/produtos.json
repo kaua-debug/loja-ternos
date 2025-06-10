@@ -3,7 +3,105 @@
     "id": 1,
     "nome": "Terno Azul",
     "descricao": "Terno elegante azul escuro",
-    "preco": 499.90,
+    "preco": 700.00,
     "imagem": "/images/terno-azul.jpg"
+  },
+  {
+    "id": 2,
+    "nome": "Terno Preto Clássico",
+    "descricao": "Terno preto ideal para eventos formais",
+    "preco": 750.00,
+    "imagem": "/images/terno-preto.jpg"
+  },
+  {
+    "id": 3,
+    "nome": "Terno Cinza Chumbo",
+    "descricao": "Terno moderno cinza escuro",
+    "preco": 720.00,
+    "imagem": "/images/terno-cinza.jpg"
+  },
+  {
+    "id": 4,
+    "nome": "Terno Bege Casual",
+    "descricao": "Terno leve e casual para ocasiões diurnas",
+    "preco": 680.00,
+    "imagem": "/images/terno-bege.jpg"
+  },
+  {
+    "id": 5,
+    "nome": "Camisa Social Branca",
+    "descricao": "Camisa básica branca 100% algodão",
+    "preco": 120.00,
+    "imagem": "/images/camisa-branca.jpg"
+  },
+  {
+    "id": 6,
+    "nome": "Camisa Azul Claro",
+    "descricao": "Camisa social azul clara, ideal para o dia a dia",
+    "preco": 130.00,
+    "imagem": "/images/camisa-azul.jpg"
+  },
+  {
+    "id": 7,
+    "nome": "Gravata Listrada Vermelha",
+    "descricao": "Gravata com listras finas vermelhas e cinza",
+    "preco": 80.00,
+    "imagem": "/images/gravata-vermelha.jpg"
+  },
+  {
+    "id": 8,
+    "nome": "Gravata Azul Marinho",
+    "descricao": "Gravata elegante azul marinho lisa",
+    "preco": 85.00,
+    "imagem": "/images/gravata-azul.jpg"
+  },
+  {
+    "id": 9,
+    "nome": "Sapato Social Preto",
+    "descricao": "Sapato em couro preto, com acabamento brilhoso",
+    "preco": 290.00,
+    "imagem": "/images/sapato-preto.jpg"
+  },
+  {
+    "id": 10,
+    "nome": "Sapato Social Marrom",
+    "descricao": "Sapato marrom escuro com costura refinada",
+    "preco": 270.00,
+    "imagem": "/images/sapato-marrom.jpg"
+  },
+  {
+    "id": 11,
+    "nome": "Terno Slim Fit Azul Claro",
+    "descricao": "Modelo ajustado, ideal para jovens",
+    "preco": 740.00,
+    "imagem": "/images/terno-slim-azul.jpg"
+  },
+  {
+    "id": 12,
+    "nome": "Terno Vinho",
+    "descricao": "Terno diferenciado na cor vinho",
+    "preco": 765.00,
+    "imagem": "/images/terno-vinho.jpg"
+  },
+  {
+    "id": 13,
+    "nome": "Camisa Social Preta",
+    "descricao": "Camisa preta elegante, fácil de combinar",
+    "preco": 125.00,
+    "imagem": "/images/camisa-preta.jpg"
+  },
+  {
+    "id": 15,
+    "nome": "Cinto de Couro Preto",
+    "descricao": "Cinto social em couro legítimo preto",
+    "preco": 95.00,
+    "imagem": "/images/cinto-preto.jpg"
+  },
+  {
+    "id": 16,
+    "nome": "Cinto de Couro Marrom",
+    "descricao": "Cinto marrom com fivela metálica clássica",
+    "preco": 90.00,
+    "imagem": "/images/cinto-marrom.jpg"
   }
-]
+ ]
