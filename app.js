@@ -5,7 +5,7 @@ const app = express();
 
 // Configuração da sessão
 app.use(session({
-    secret: 'sua_chave_secreta_muito_segura', // Troque por uma string forte e secreta em produção
+    secret: 'Suhglkmi13@', // Troque por uma string forte e secreta em produção
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Em produção com HTTPS, coloque true
